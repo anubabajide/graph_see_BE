@@ -15,7 +15,7 @@ def add_user():
     s = int(request.form['s'])
     t = int(request.form['t'])
     response = dijkstra.distance(adj, cost, s, t)
-
+    print(response)
     return jsonify(response)
 
 @app.route('/user/<email>',methods=['DELETE'])
