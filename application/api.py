@@ -2,10 +2,8 @@ from flask import current_app as app, request, jsonify
 import sys
 import ast
 
-sys.path.append('C:/Users/anuba/Desktop/Projects/IDEAS/graphsee/backend/application/algorithms')
-# import .algorithms.dijkstra as dijkstra
 #from flask_cors import CORS
-import dijkstra
+from .algorithms import dijkstra
 #CORS(app)
 
 @app.route('/solve',methods=['POST'])
@@ -14,7 +12,7 @@ def add_user():
     cost=ast.literal_eval(request.form['cost'])
     s = int(request.form['s'])
     t = int(request.form['t'])
-    response = dijkstra.distance(adj, cost, s, t)
+    response = dijkstra.find_distance(adj, cost, s, t)
     print(response)
     return jsonify(response)
 

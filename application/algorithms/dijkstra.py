@@ -9,16 +9,18 @@ def get_path(prev, node):
         node = prev[node]
     return result[::-1]
 
-def distance(adj, cost, s, t):
-    dist = [inf] * len(adj)
-    prev = [None] * len(adj)
-    seen = [False] * len(adj)
-    journey = [0] * len(adj)
+def find_distance(adj, cost, s, t):
+    num_nodes = len(adj)
+    dist = [inf] * num_nodes
+    prev = [None] * num_nodes
+    seen = [False] * num_nodes
+    journey = [0] * num_nodes
+
     dist[s] = 0
-    priority_queue = [(dist[i], i) for i in range(len(adj))]
+    priority_queue = [(dist[i], i) for i in range(num_nodes)]
     heapify(priority_queue)
     
-    for x in range(len(adj)):
+    for x in range(num_nodes):
         _, index = heappop(priority_queue)
         while seen[index]:
             _, index = heappop(priority_queue)
