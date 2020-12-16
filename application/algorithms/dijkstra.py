@@ -14,18 +14,18 @@ def find_distance(adj, cost, s, t):
     dist = [inf] * num_nodes
     prev = [None] * num_nodes
     seen = [False] * num_nodes
-    journey = [0] * num_nodes
+    journey = []
 
     dist[s] = 0
     priority_queue = [(dist[i], i) for i in range(num_nodes)]
     heapify(priority_queue)
     
-    for x in range(num_nodes):
+    for _x in range(num_nodes):
         _, index = heappop(priority_queue)
         while seen[index]:
             _, index = heappop(priority_queue)
         seen[index] = True
-        journey[x] = index
+        journey.append(index)
 
         for i in range(len(adj[index])):
             if dist[adj[index][i]] > dist[index] + cost[index][i]:
@@ -34,9 +34,7 @@ def find_distance(adj, cost, s, t):
                 heappush(priority_queue, (dist[adj[index][i]], adj[index][i]))
 
         if seen[t]:
-            del journey[x+1:]
-            if dist[t] < inf: 
-                return get_path(prev, t), journey
-            else:
-                return -1, journey
-    return -1
+            break
+    if dist[t] < inf: 
+        return get_path(prev, t), journey
+    return -1, journey

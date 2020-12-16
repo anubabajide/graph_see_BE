@@ -4,7 +4,6 @@ inf = float('inf')
 
 class AStar:
     def __init__(self, n, adj, cost, x, y):
-        # See the explanations of these fields in the starter for friend_suggestion
         self.num = n
         self.adj = adj
         self.cost = cost
@@ -36,7 +35,7 @@ class AStar:
         self.dest_2d = (self.x_cord[dest], self.y_cord[dest])
         self.constant = sqrt((src_2d[0]-self.dest_2d[0])**2 + (src_2d[1]-self.dest_2d[1])**2)
 
-    def visit(self, node_que, index):
+    def visit(self, node_que, index, prev):
         '''Summary of visit method
         Parameters:
         node_que (queue.PriorityQueue): heap containing unprocessed nodes
@@ -50,6 +49,7 @@ class AStar:
         for vert in range(len(adj[index])):
             if distance[adj[index][vert]] > distance[index] + cost[index][vert]:
                 distance[adj[index][vert]] = distance[index] + cost[index][vert]
+                prev[adj[index][vert]] = index
                 node_que.put((self.potential(adj[index][vert]), adj[index][vert]))
 
     def potential(self, vert):
@@ -62,6 +62,20 @@ class AStar:
         part = sqrt((self.x_cord[vert]-self.dest_2d[0])**2 + (self.y_cord[vert]-self.dest_2d[1])**2)
         return self.distance[vert] - self.constant + part
 
+    def get_path(self, prev, node):
+        '''Summary of get_path method
+        Parameters:
+        prev (list): source node in array
+        node (int): destination node in array
+        Returns:
+        list: Path from node to source
+        '''
+        result = []
+        while node is not None:
+            result.append(node)
+            node = prev[node]
+        return result[::-1]
+    
     def query(self, src, dest):
         '''Summary of query method
         Parameters:
@@ -74,6 +88,8 @@ class AStar:
         node_que = queue.PriorityQueue()
         self.distance[src] = 0
         node_que.put((self.potential(src), src))
+        journey = []
+        prev = [None] * self.num
         while not node_que.empty():
             try:
                 _, index = node_que.get_nowait()
@@ -81,7 +97,10 @@ class AStar:
                     _, index = node_que.get_nowait()
             except queue.Empty:
                 break
-            self.visit(node_que, index)
+            self.visit(node_que, index, prev)
+            journey.append(index)
             if self.visited[dest]:
                 break
-        return self.distance[dest] if self.distance[dest]<inf else -1
+        if self.distance[dest]<inf: 
+            return self.get_path(prev, dest), journey
+        return -1, journey
